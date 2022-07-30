@@ -4,11 +4,15 @@ import android.app.ProgressDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.addTextChangedListener
+import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
@@ -69,14 +73,17 @@ class MainActivity : AppCompatActivity(),Clickposition {
         })
 
         ivsearch.setOnClickListener {
-            datalist111= datalist.filter{ it.contactName.equals(etsearch.text.toString().capitalize())} as MutableList<Heirarchy>
+            datalist111= datalist.filter{ it.contactName.contains(etsearch.text.toString().capitalize())} as MutableList<Heirarchy>
             customAdaptor=CustomAdaptor(datalist111, clickposition as MainActivity)
             recyclerView.adapter=customAdaptor
-            if(datalist111.equals(null)){
+            if(datalist111.isNullOrEmpty()){
                 showtoast("No Employee Found.")
             }
-            if(etsearch.text.toString()==""){
+        }
+        etsearch.doAfterTextChanged {
+            if(etsearch.text.isNullOrEmpty()){
                 datalist.clear()
+                datalist111.clear()
                 progressDialog.show()
                 viewModel.getdata()
             }
@@ -95,6 +102,7 @@ class MainActivity : AppCompatActivity(),Clickposition {
     }
 
     private fun showtoast(s: String) {
+
         Toast.makeText(this,s,Toast.LENGTH_LONG).show()
 
     }
